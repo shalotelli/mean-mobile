@@ -1,0 +1,10 @@
+.DS_Store
+.nodemonignore
+.sass-cache/
+npm-debug.loh
+node_modules/
+assets/dependencies/
+assets/js/
+assets/css/
+.tmp/
+.idea

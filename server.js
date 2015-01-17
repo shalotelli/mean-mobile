@@ -3,12 +3,12 @@
 var express = require('express');
 
 global.mongoose = require('mongoose');
-global.app = express();
 
-var init = require('./config/init')(),
+var app = express(),
+    init = require('./config/init')(),
     config = require('./config/config');
 
-require('./config/routes');
+require('./config/routes')(app);
 
 // enable cors
 app.use(function (req, res, next) {

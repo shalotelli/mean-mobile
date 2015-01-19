@@ -82,7 +82,7 @@ module.exports = function (grunt) {
 
       dev: {
         cwd: 'assets/',
-        src: 'views/**.html',
+        src: 'views/**/*.html',
         dest: 'assets/js/views.js'
       }
     },

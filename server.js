@@ -1,6 +1,7 @@
 'use strict';
 
-var express = require('express');
+var express = require('express'),
+    bodyParser = require('body-parser');
 
 global.mongoose = require('mongoose');
 global.app = express();
@@ -8,14 +9,21 @@ global.app = express();
 var init = require('./config/init')(),
     config = require('./config/config');
 
-require('./config/routes');
-
 // enable cors
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+// accept POST
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+// routes
+require('./config/routes');
 
 // serve static files
 app.use(express.static(__dirname + '/.tmp/public'));

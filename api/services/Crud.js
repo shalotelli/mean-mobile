@@ -10,7 +10,7 @@ Crud.prototype.find = function (req, res) {
 
   if (req.params.id) {
     criteria._id = req.params.id;
-    returnSingle = 'findOne';
+    findMethod = 'findOne';
   }
 
   if (! _.isEmpty(req.query)) {

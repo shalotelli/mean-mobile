@@ -55,7 +55,7 @@ module.exports = function (grunt) {
       },
 
       app: {
-        files: 'assets/app/**/*',
+        files: [ 'assets/index.html', 'assets/app/**/*' ],
         tasks: [ 'concat:dev', 'sync:dev' ]
       },
 

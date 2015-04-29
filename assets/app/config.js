@@ -6,13 +6,13 @@
     version: '0.0.0'
   };
 
-  angular.module('ngtemplates.views', []);
+  angular.module('templates', []);
 
   angular.module(app.name, [
     'ui.router',
     'ngResource',
 
-    'ngtemplates.views'
+    'templates'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider

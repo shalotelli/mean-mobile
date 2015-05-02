@@ -4,13 +4,13 @@ var config = require('./config/config');
 
 var del = require('del'),
     gulp = require('gulp'),
-    gulpBowerFiles = require('gulp-bower-files'),
+    mainBowerFiles = require('main-bower-files'),
     templateCache = require('gulp-angular-templatecache'),
     jshint = require('gulp-jshint'),
     concat = require('gulp-concat'),
     ngAnnotate = require('gulp-ng-annotate'),
     sass = require('gulp-sass'),
-    sourcemaps = require('gulp-sourcemaps'),
+    sourcemap = require('gulp-sourcemaps'),
     nodemon = require('gulp-nodemon');
 
 var watchFiles = {
@@ -18,7 +18,7 @@ var watchFiles = {
 
   devDir: '.tmp/public/',
   buildDir: 'build/public/',
-  assetsDir: 'assets/',
+  assetsDir: './assets/',
   jsDir: 'assets/js/',
   sassDir: 'assets/scss/',
   cssDir: 'assets/css/',
@@ -46,11 +46,11 @@ gulp.task('clean', function (cb) {
 });
 
 gulp.task('bower-files', [ 'clean' ], function () {
-  return gulpBowerFiles()
+  return gulp.src(mainBowerFiles())
     .pipe(gulp.dest(watchFiles.dependenciesOutputFile));
 });
 
-gulp.task('templates', [ 'clear' ], function () {
+gulp.task('templates', [ 'clean' ], function () {
   return gulp.src(watchFiles.viewFiles)
     .pipe(templateCache())
     .pipe(gulp.dest(watchFiles.viewOutputFile));
@@ -66,24 +66,24 @@ gulp.task('app', [ 'clean' ], function () {
 
 gulp.task('styles', [ 'clean' ], function () {
   return gulp.src(watchFiles.sassFiles)
-    .pipe(soucemap.init())
+    .pipe(sourcemap.init())
     .pipe(sass())
-    .pipe(sourcemaps.write())
+    .pipe(sourcemap.write())
     .pipe(gulp.dest(watchFiles.cssDir));
 });
 
 gulp.task('dev', [ 'templates', 'bower-files', 'app', 'styles' ], function () {
   return gulp.src([
     watchFiles.allFiles,
-    watchFiles.ignoreApp,
-    watchFiles.ignoreSass,
-    watchFiles.ignoreMarkdown,
-    watchFiles.ignoreViews,
-    watchFiles.ignoreDependencies
+    //watchFiles.ignoreApp,
+    //watchFiles.ignoreSass,
+    //watchFiles.ignoreMarkdown,
+    //watchFiles.ignoreViews,
+    //watchFiles.ignoreDependencies
   ], {
     base: watchFiles.assetsDir
   })
-  .dest(watchFiles.devDir);
+  .pipe(gulp.dest(watchFiles.devDir));
 });
 
 gulp.task('build', []);
@@ -102,16 +102,3 @@ gulp.task('serve', [ 'dev' ], function () {
     }
   });
 });
-
-script: 'server.js',
-options: {
-  ext: 'js,html',
-  env: {
-    PORT: config.server.port,
-    callback: function (nodemon) {
-      nodemon.on('log', function (event) {
-        console.log(event.colour);
-      });
-    }
-  }
-}

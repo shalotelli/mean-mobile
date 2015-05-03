@@ -14,7 +14,7 @@ var del = require('del'),
     nodemon = require('gulp-nodemon');
 
 var watchFiles = {
-  allFiles: '**/*',
+  allFiles: './**/*',
 
   devDir: '.tmp/public/',
   buildDir: 'build/public/',
@@ -25,18 +25,18 @@ var watchFiles = {
   imageDir: 'assets/img/',
 
   dependenciesOutputFile: 'assets/js/dependencies.js',
-  ignoreDependencies: '!**/dependencies/**',
+  ignoreDependencies: '!./**/dependencies{,/**}',
 
   viewFiles: 'assets/views/**/*.html',
   viewOutputFile: 'assets/js/views.js',
-  ignoreViews: '!**/views/**',
+  ignoreViews: '!./**/views{,/**}',
   
   appFiles: 'assets/app/**/*.js',
   appOutputFile: 'assets/js/app.js',
-  ignoreApp: '!**/app/**',
+  ignoreApp: '!./**/app{,/**}',
 
   sassFiles: 'assets/scss/**/*.scss',
-  ignoreSass: '!**/scss/**',
+  ignoreSass: '!./**/scss{,/**}',
 
   ignoreMarkdown: '!*.md'
 };
@@ -75,13 +75,13 @@ gulp.task('styles', [ 'clean' ], function () {
 gulp.task('dev', [ 'templates', 'bower-files', 'app', 'styles' ], function () {
   return gulp.src([
     watchFiles.allFiles,
-    //watchFiles.ignoreApp,
-    //watchFiles.ignoreSass,
-    //watchFiles.ignoreMarkdown,
-    //watchFiles.ignoreViews,
-    //watchFiles.ignoreDependencies
+    watchFiles.ignoreApp,
+    watchFiles.ignoreSass,
+    watchFiles.ignoreMarkdown,
+    watchFiles.ignoreViews,
+    watchFiles.ignoreDependencies
   ], {
-    base: watchFiles.assetsDir
+    cwd: watchFiles.assetsDir
   })
   .pipe(gulp.dest(watchFiles.devDir));
 });

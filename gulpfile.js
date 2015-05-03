@@ -47,7 +47,8 @@ gulp.task('clean', function (cb) {
 
 gulp.task('bower-files', [ 'clean' ], function () {
   return gulp.src(mainBowerFiles())
-    .pipe(gulp.dest(watchFiles.dependenciesOutputFile));
+    .pipe(concat(watchFiles.dependenciesOutputFile.split('/').pop()))
+    .pipe(gulp.dest(watchFiles.jsDir));
 });
 
 gulp.task('templates', [ 'clean' ], function () {

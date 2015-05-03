@@ -11,7 +11,9 @@ var del = require('del'),
     ngAnnotate = require('gulp-ng-annotate'),
     sass = require('gulp-sass'),
     sourcemap = require('gulp-sourcemaps'),
-    nodemon = require('gulp-nodemon');
+    nodemon = require('gulp-nodemon'),
+    uglify = require('gulp-uglify'),
+    minifyCss = require('gulp-minify-css');
 
 var watchFiles = {
   allFiles: './**/*',
@@ -74,7 +76,7 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(watchFiles.cssDir));
 });
 
-gulp.task('copy', [ 'clean' ], function () {
+gulp.task('copy-dev', [ 'clean' ], function () {
   return gulp.src([
     watchFiles.allFiles,
     watchFiles.ignoreApp,
@@ -86,6 +88,23 @@ gulp.task('copy', [ 'clean' ], function () {
     cwd: watchFiles.assetsDir
   })
   .pipe(gulp.dest(watchFiles.devDir));
+});
+
+gulp.task('copy-build', [ 'dev' ], function () {
+  return gulp.src(watchFiles.devDir + '**')
+    .pipe(gulp.dest(watchFiles.buildDir));
+});
+
+gulp.task('uglify', [ 'copy-build' ], function () {
+  return gulp.src(watchFiles.buildDir + 'js/**')
+    .pipe(uglify())
+    .pipe(gulp.dest(watchFiles.buildDir + 'js/'));
+});
+
+gulp.task('minify-css', [ 'copy-build' ], function () {
+  gulp.src(watchFiles.buildDir + 'css/**')
+    .pipe(minifyCss())
+    .pipe(gulp.dest(watchFiles.buildDir + 'css/'));
 });
 
 gulp.task('watch', function () {
@@ -103,10 +122,13 @@ gulp.task('dev', [
   'bower-files',
   'app',
   'styles',
-  'copy'
+  'copy-dev'
 ]);
 
-gulp.task('build', []);
+gulp.task('build', [
+  'uglify',
+  'minify-css'
+]);
 
 gulp.task('serve', [ 'dev', 'watch' ], function () {
   nodemon({

@@ -19,6 +19,7 @@ var watchFiles = {
   devDir: '.tmp/public/',
   buildDir: 'build/public/',
   assetsDir: './assets/',
+  appDir: 'assets/app/',
   jsDir: 'assets/js/',
   sassDir: 'assets/scss/',
   cssDir: 'assets/css/',
@@ -36,27 +37,28 @@ var watchFiles = {
 
   viewFiles: 'assets/views/**/*.html',
   appFiles: 'assets/app/**/*.js',
-  sassFiles: 'assets/scss/**/*.scss'
-
+  sassFiles: 'assets/scss/**/*.scss',
+  imageFiles: 'assets/img/**',
+  dependencyFiles: 'assets/dependencies/**'
 };
 
 gulp.task('clean', function (cb) {
   del([ watchFiles.devDir, watchFiles.buildDir ], cb);
 });
 
-gulp.task('bower-files', [ 'clean' ], function () {
+gulp.task('bower-files', function () {
   return gulp.src(mainBowerFiles())
     .pipe(concat(watchFiles.dependenciesOutputFile))
     .pipe(gulp.dest(watchFiles.jsDir));
 });
 
-gulp.task('templates', [ 'clean' ], function () {
+gulp.task('templates', function () {
   return gulp.src(watchFiles.viewFiles)
     .pipe(templateCache({ filename: watchFiles.viewOutputFile }))
     .pipe(gulp.dest(watchFiles.jsDir));
 });
 
-gulp.task('app', [ 'clean' ], function () {
+gulp.task('app', function () {
   return gulp.src(watchFiles.appFiles)
     .pipe(jshint())
     .pipe(ngAnnotate())
@@ -64,7 +66,7 @@ gulp.task('app', [ 'clean' ], function () {
     .pipe(gulp.dest(watchFiles.jsDir));
 });
 
-gulp.task('styles', [ 'clean' ], function () {
+gulp.task('styles', function () {
   return gulp.src(watchFiles.sassFiles)
     .pipe(sourcemap.init())
     .pipe(sass())
@@ -72,7 +74,7 @@ gulp.task('styles', [ 'clean' ], function () {
     .pipe(gulp.dest(watchFiles.cssDir));
 });
 
-gulp.task('dev', [ 'templates', 'bower-files', 'app', 'styles' ], function () {
+gulp.task('copy', [ 'clean' ], function () {
   return gulp.src([
     watchFiles.allFiles,
     watchFiles.ignoreApp,
@@ -86,9 +88,27 @@ gulp.task('dev', [ 'templates', 'bower-files', 'app', 'styles' ], function () {
   .pipe(gulp.dest(watchFiles.devDir));
 });
 
+gulp.task('watch', function () {
+  gulp.watch([ watchFiles.assetsDir + 'index.html' ], [ 'copy' ]);
+  gulp.watch([ watchFiles.appFiles ], [ 'app', 'copy' ]);
+  gulp.watch([ watchFiles.viewFiles ], [ 'templates', 'copy' ]);
+  gulp.watch([ watchFiles.sassFiles ], [ 'styles', 'copy' ]);
+  gulp.watch([ watchFiles.imageFiles ], [ 'copy' ]);
+  gulp.watch([ watchFiles.dependencyFiles ], [ 'bower-files', 'copy' ]);
+});
+
+gulp.task('dev', [
+  'clean',
+  'templates',
+  'bower-files',
+  'app',
+  'styles',
+  'copy'
+]);
+
 gulp.task('build', []);
 
-gulp.task('serve', [ 'dev' ], function () {
+gulp.task('serve', [ 'dev', 'watch' ], function () {
   nodemon({
     script: 'server.js',
     ext: 'js html',

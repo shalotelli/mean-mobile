@@ -24,21 +24,20 @@ var watchFiles = {
   cssDir: 'assets/css/',
   imageDir: 'assets/img/',
 
-  dependenciesOutputFile: 'assets/js/dependencies.js',
+  appOutputFile: 'app.js',
+  dependenciesOutputFile: 'dependencies.js',
+  viewOutputFile: 'views.js',
+  
+  ignoreApp: '!./**/app{,/**}',
   ignoreDependencies: '!./**/dependencies{,/**}',
+  ignoreViews: '!./**/views{,/**}',
+  ignoreSass: '!./**/scss{,/**}',
+  ignoreMarkdown: '!*.md',
 
   viewFiles: 'assets/views/**/*.html',
-  viewOutputFile: 'assets/js/views.js',
-  ignoreViews: '!./**/views{,/**}',
-  
   appFiles: 'assets/app/**/*.js',
-  appOutputFile: 'assets/js/app.js',
-  ignoreApp: '!./**/app{,/**}',
+  sassFiles: 'assets/scss/**/*.scss'
 
-  sassFiles: 'assets/scss/**/*.scss',
-  ignoreSass: '!./**/scss{,/**}',
-
-  ignoreMarkdown: '!*.md'
 };
 
 gulp.task('clean', function (cb) {
@@ -47,21 +46,21 @@ gulp.task('clean', function (cb) {
 
 gulp.task('bower-files', [ 'clean' ], function () {
   return gulp.src(mainBowerFiles())
-    .pipe(concat(watchFiles.dependenciesOutputFile.split('/').pop()))
+    .pipe(concat(watchFiles.dependenciesOutputFile))
     .pipe(gulp.dest(watchFiles.jsDir));
 });
 
 gulp.task('templates', [ 'clean' ], function () {
   return gulp.src(watchFiles.viewFiles)
-    .pipe(templateCache())
-    .pipe(gulp.dest(watchFiles.viewOutputFile));
+    .pipe(templateCache({ filename: watchFiles.viewOutputFile }))
+    .pipe(gulp.dest(watchFiles.jsDir));
 });
 
 gulp.task('app', [ 'clean' ], function () {
   return gulp.src(watchFiles.appFiles)
     .pipe(jshint())
     .pipe(ngAnnotate())
-    .pipe(concat(watchFiles.appOutputFile.split('/').pop()))
+    .pipe(concat(watchFiles.appOutputFile))
     .pipe(gulp.dest(watchFiles.jsDir));
 });
 

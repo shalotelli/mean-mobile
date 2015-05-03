@@ -1,1 +1,1 @@
-views
+assets/views

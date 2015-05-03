@@ -8,11 +8,19 @@
 
   angular.module('templates', []);
 
+  angular.module(app.name + '.controllers', []);
+  angular.module(app.name + '.models', []);
+  angular.module(app.name + '.services', []);
+
   angular.module(app.name, [
     'ui.router',
     'ngResource',
 
-    'templates'
+    'templates',
+
+    app.name + '.controllers',
+    app.name + '.models',
+    app.name + '.services'
   ])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider

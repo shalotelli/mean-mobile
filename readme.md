@@ -54,11 +54,12 @@ module.exports = new Crud(Example);
 // config/routes.js
 var restify = require('../api/services/Restify.js'),
     ExampleController = require('../api/controllers/ExampleController.js');
-    
+
 restify('api/example', ExampleController);
 ```
 
 #Folder Structure
+```
 | - app
   | - controllers
   | - models
@@ -85,6 +86,7 @@ restify('api/example', ExampleController);
 | - package.json
 | - readme.md
 | - server.js
+```
 
 #Ideas
 - [ ] Add Plato code coverage

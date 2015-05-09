@@ -18,8 +18,7 @@ var del = require('del'),
 var watchFiles = {
   allFiles: './**/*',
 
-  devDir: '.tmp/public/',
-  buildDir: 'build/public/',
+  buildDir: 'www/public/',
   assetsDir: './assets/',
   appDir: 'assets/app/',
   jsDir: 'assets/js/',
@@ -45,7 +44,7 @@ var watchFiles = {
 };
 
 gulp.task('clean', function (cb) {
-  del([ watchFiles.devDir, watchFiles.buildDir ], cb);
+  del([ watchFiles.buildDir ], cb);
 });
 
 gulp.task('bower-files', function () {
@@ -76,7 +75,7 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(watchFiles.cssDir));
 });
 
-gulp.task('copy-dev', [ 'clean' ], function () {
+gulp.task('copy', [ 'clean' ], function () {
   return gulp.src([
     watchFiles.allFiles,
     watchFiles.ignoreApp,
@@ -87,21 +86,16 @@ gulp.task('copy-dev', [ 'clean' ], function () {
   ], {
     cwd: watchFiles.assetsDir
   })
-  .pipe(gulp.dest(watchFiles.devDir));
+  .pipe(gulp.dest(watchFiles.buildDir));
 });
 
-gulp.task('copy-build', [ 'dev' ], function () {
-  return gulp.src(watchFiles.devDir + '**')
-    .pipe(gulp.dest(watchFiles.buildDir));
-});
-
-gulp.task('uglify', [ 'copy-build' ], function () {
+gulp.task('uglify', function () {
   return gulp.src(watchFiles.buildDir + 'js/**')
     .pipe(uglify())
     .pipe(gulp.dest(watchFiles.buildDir + 'js/'));
 });
 
-gulp.task('minify-css', [ 'copy-build' ], function () {
+gulp.task('minify-css', function () {
   gulp.src(watchFiles.buildDir + 'css/**')
     .pipe(minifyCss())
     .pipe(gulp.dest(watchFiles.buildDir + 'css/'));
@@ -122,10 +116,11 @@ gulp.task('dev', [
   'bower-files',
   'app',
   'styles',
-  'copy-dev'
+  'copy'
 ]);
 
 gulp.task('build', [
+  'dev',
   'uglify',
   'minify-css'
 ]);

@@ -9,8 +9,6 @@ global.app = express();
 var init = require('./config/init')(),
     config = require('./config/config');
 
-var publicFolder = process.env.node_env === 'production' ? '/build' : '/.tmp';
-
 // enable cors
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -28,7 +26,7 @@ app.use(bodyParser.urlencoded({
 require('./config/routes');
 
 // serve static files
-app.use(express.static(__dirname + publicFolder + '/public'));
+app.use(express.static(__dirname + '/www/public'));
 
 // db connect
 var db = mongoose.connect('mongodb://' + config.db.host + '/' + config.db.name, function(err) {
